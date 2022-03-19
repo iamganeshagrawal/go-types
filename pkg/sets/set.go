@@ -64,6 +64,11 @@ func (s *Set[T]) Has(e T) bool {
 	return ok
 }
 
+// IsEmpty returns true if set contains no elements else false.
+func (s *Set[T]) IsEmpty() bool {
+	return s.Size() == 0
+}
+
 // Contains returns true if all elements exists in the set.
 func (s *Set[T]) Contains(v ...T) bool {
 	for _, item := range v {
@@ -119,6 +124,9 @@ func (s *Set[T]) Clone() *Set[T] {
 // the order of the operands. In other words:
 // 	setA.Union(setB) == setB.Union(setA)
 func (s *Set[T]) Union(other *Set[T]) *Set[T] {
+	if other == nil {
+		panic(fmt.Sprintf("other set can't be nil"))
+	}
 	res := s.Clone()
 	for item := range other.values {
 		res.values[item] = struct{}{}
@@ -136,6 +144,9 @@ func (s *Set[T]) Union(other *Set[T]) *Set[T] {
 // the order of the operands. In other words:
 // 	setA.Intersect(setB) == setB.Intersect(setA)
 func (s *Set[T]) Intersect(other *Set[T]) *Set[T] {
+	if other == nil {
+		panic(fmt.Sprintf("other set can't be nil"))
+	}
 	// use smaller set for optimization
 	if s.Size() > other.Size() {
 		return other.intersect(s)
@@ -168,6 +179,9 @@ func (s *Set[T]) intersect(other *Set[T]) *Set[T] {
 // depending on the order of the operands. In other words:
 // 	setA.Difference(setB) != setB.Difference(setA)
 func (s *Set[T]) Difference(other *Set[T]) *Set[T] {
+	if other == nil {
+		panic(fmt.Sprintf("other set can't be nil"))
+	}
 	res := NewEmptySet[T]()
 	for item := range s.values {
 		if !other.Has(item) {
